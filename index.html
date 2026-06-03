@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter The Void</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #231f20;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      .container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .password-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .password-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        max-width: 300px;
+        padding: 20px;
+      }
+
+      .password-form input {
+        padding: 12px;
+        border: 1px solid #444;
+        background-color: #1a1a1a;
+        color: #fff;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .password-form input::placeholder {
+        color: #888;
+      }
+
+      .password-form button {
+        padding: 12px;
+        background-color: #fff;
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.2s;
+      }
+
+      .password-form button:hover {
+        background-color: #ddd;
+      }
+
+      .error {
+        color: #ff6b6b;
+        font-size: 14px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      img {
+        width: 100%;
+        max-width: 430px;
+        display: block;
+        height: auto;
+      }
+
+      img:first-of-type {
+        border-bottom: 2px solid #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="passwordScreen" class="password-screen">
+      <form class="password-form" onsubmit="checkPassword(event)">
+        <h2 style="color: #fff; margin-bottom: 8px; text-align: center;">Enter The Void</h2>
+        <input type="password" id="passwordInput" placeholder="Enter password" />
+        <button type="submit">Enter</button>
+        <div id="errorMsg" class="error"></div>
+      </form>
+    </div>
+
+    <div id="contentScreen" class="hidden container">
+      <img src="/WhatsApp_Image_2026-05-25_at_20.43.52.jpeg" alt="Enter The Void - Event Poster">
+      <img src="/WhatsApp_Image_2026-05-25_at_21.18.35.jpeg" alt="Enter The Void - Lineup Poster">
+    </div>
+
+    <script>
+      const PASSWORD_HASH = "9253f2001851b4b88e463cbc08fdd04ab8a3f311e97a0e2b068396970d9e9594";
+
+      async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      async function checkPassword(e) {
+        e.preventDefault();
+        const input = document.getElementById("passwordInput").value;
+        const errorMsg = document.getElementById("errorMsg");
+
+        const inputHash = await hashPassword(input);
+
+        if (inputHash === PASSWORD_HASH) {
+          document.getElementById("passwordScreen").classList.add("hidden");
+          document.getElementById("contentScreen").classList.remove("hidden");
+          localStorage.setItem("voidAccess", "true");
+        } else {
+          errorMsg.textContent = "Incorrect password";
+          document.getElementById("passwordInput").value = "";
+        }
+      }
+
+      // Check if already authorized
+      if (localStorage.getItem("voidAccess") === "true") {
+        document.getElementById("passwordScreen").classList.add("hidden");
+        document.getElementById("contentScreen").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
+
