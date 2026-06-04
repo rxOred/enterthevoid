@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'Geoparody HV';
+  src: url(/Geoparody-Hv.otf) format('opentype');
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
